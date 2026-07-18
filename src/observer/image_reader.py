@@ -59,3 +59,34 @@ if __name__ == "__main__":
     img_path = create_test_image()
     read_image_info(img_path)
     detect_edges(img_path)
+
+def detect_shapes(path, output_path="contours_output.png"):
+    """Finds individual shapes in the image and draws boxes around them."""
+    image = cv2.imread(path)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    edges = cv2.Canny(gray, threshold1=30, threshold2=90)
+
+    # Find contours: the outlines of separate connected shapes
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    print(f"Found {len(contours)} shape(s) in the image.")
+
+    for i, contour in enumerate(contours):
+        # Get a bounding box (x, y, width, height) around each shape
+        x, y, w, h = cv2.boundingRect(contour)
+        area = cv2.contourArea(contour)
+
+        print(f"Shape {i+1}: position=({x},{y}), size=({w}x{h}), area={area:.0f}")
+
+        # Draw a yellow rectangle around each detected shape
+        cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 255), thickness=2)
+
+    cv2.imwrite(output_path, image)
+    print(f"Shapes marked and saved at: {output_path}")
+    return output_path
+
+if __name__ == "__main__":
+    img_path = create_test_image()
+    read_image_info(img_path)
+    detect_edges(img_path)
+    detect_shapes(img_path)
