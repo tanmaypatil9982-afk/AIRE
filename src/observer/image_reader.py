@@ -36,3 +36,26 @@ def read_image_info(path):
 if __name__ == "__main__":
     img_path = create_test_image()
     read_image_info(img_path)
+
+def detect_edges(path, output_path="edges_output.png"):
+    """Detects edges in an image — AIRE's first 'Understand' capability."""
+    image = cv2.imread(path)
+
+    if image is None:
+        print("Could not read image.")
+        return
+
+    # Convert to grayscale first — edge detection works on brightness, not color
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Canny edge detection: finds boundaries where brightness changes sharply
+    edges = cv2.Canny(gray, threshold1=30, threshold2=90)
+
+    cv2.imwrite(output_path, edges)
+    print(f"Edge-detected image saved at: {output_path}")
+    return output_path
+
+if __name__ == "__main__":
+    img_path = create_test_image()
+    read_image_info(img_path)
+    detect_edges(img_path)
